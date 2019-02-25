@@ -95,6 +95,26 @@ def group_reply_media(msg):
 		if not item['UserName'] == chatroom_id:
 			itchat.send('@%s@%s' % ({'Picture': 'img', 'Video': 'vid'}.get(msg['Type'], 'fil'), msg['FileName']), item['UserName'])
 
+@itchat.msg_register(TEXT, isGroupChat=True)
+def group_text(msg):
+    group  = itchat.get_chatrooms(update=True)
+    from_user = ''
+    for g in group:
+        if g['NickName'] == 'KLSE':#从群中找到指定的群聊
+            from_group = g['UserName']
+            for menb in g['MemberList']:
+                #print(menb['NickName'])
+                if menb['NickName'] == "sallyyslu":#从群成员列表找到用户,只转发他的消息
+                    from_user = menb['UserName']
+                    break
+        if g['NickName'] == 'test reply group':#把消息发到这个群
+            to_group = g['UserName']
+    if msg['FromUserName'] == from_group:
+        if msg['ActualUserName'] == from_user:
+            itchat.send('%s:%s'%(msg['ActualNickName'],msg['Content']),to_group)
+
+			
+			
 # 扫二维码登录
 #itchat.auto_login(hotReload=False)
 itchat.auto_login(hotReload=True)
